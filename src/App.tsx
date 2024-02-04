@@ -1,6 +1,6 @@
 import './App.css'
-import LoginForm from './components/LoginForm'
-import RegisterForm from './components/RegisterForm'
+import LoginForm from './pages/Login'
+import RegisterForm from './pages/Register'
 import {Routes, Route, BrowserRouter} from "react-router-dom"
 function App() {
 
