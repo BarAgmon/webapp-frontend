@@ -3,7 +3,7 @@ import { loginUser, IAuthResponse, IUser } from "../services/user-service";
 
 interface IUserContext {
   user: IUser | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (user: IUser) => Promise<void>;
   logout: () => void;
 }
 
@@ -13,11 +13,12 @@ const UserContext = createContext<IUserContext | undefined>(defaultUserContextVa
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<IUser | null>(null);
 
-  const login = async (email: string, password: string) => {
-    const response: IAuthResponse = await loginUser({ email, password });
+  const login = async (user: IUser) => {
+    const response: IAuthResponse = await loginUser(user);
+    console.log(response)
     localStorage.setItem('accessToken', response.accessToken);
     localStorage.setItem('refreshToken', response.refreshToken);
-    setUser({ email }); 
+    setUser(user); 
   };
 
   const logout = () => {

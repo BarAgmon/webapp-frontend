@@ -2,16 +2,27 @@ import './App.css'
 import LoginForm from './pages/Login'
 import RegisterForm from './pages/Register'
 import {Routes, Route, BrowserRouter} from "react-router-dom"
+import { UserProvider } from './context/user-context'
+import ProtectedRoute from "./pages/ProtectedRoute"
+import HomePage from "./pages/HomePage"
+
 function App() {
 
   return (
     <>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LoginForm />} />
-        <Route path="/register" element={<RegisterForm />} />
-      </Routes>
-    </BrowserRouter>
+    <UserProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={
+            <ProtectedRoute>
+              <HomePage />
+            </ProtectedRoute>
+          } />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/register" element={<RegisterForm />} />
+        </Routes>
+      </BrowserRouter>
+    </UserProvider>
     </>
   )
 }

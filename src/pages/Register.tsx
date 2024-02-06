@@ -8,6 +8,8 @@ import RegisterBckgImg from "../images/register.jpg"
 import { uploadPhoto } from '../services/file-service'
 import {registrUser, IUser} from "../services/user-service"
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_MIME_TYPES = [
   "image/jpeg"
@@ -31,6 +33,7 @@ const loginSchema = z.object({
 type FormData = z.infer<typeof loginSchema>
 
 function RegisterForm() {
+    const navigate = useNavigate();
     const [showAlert, setShowAlert] = useState(false)
     const [alertVariant, setAlertVariant] = useState("")
     const [alertMsg, setAlertMsg] = useState("")
@@ -60,6 +63,7 @@ function RegisterForm() {
                 const res = await registrUser(user)
                 console.log(res)
                 handleAlert(true, "")
+                navigate('/login');
             }
 
         }

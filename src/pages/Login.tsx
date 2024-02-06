@@ -2,8 +2,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from 'react-router-dom';
 import { FieldValues, useForm } from "react-hook-form";
 import z from "zod";
+import axios from "axios";
 import styled from "styled-components";
 import LoginBckgImg from "../images/loginbckg.jpg";
+import {IUser} from "../services/user-service"
+import {useUser} from "../context/user-context"
+import { useState } from "react";
+import Alert from 'react-bootstrap/Alert';
+import { useNavigate } from 'react-router-dom';
 
 const loginSchema = z.object({
     email: z.string().email({message: "Invalid email address"}),
@@ -14,12 +20,30 @@ type FormData = z.infer<typeof loginSchema>
 
 
 function LoginForm() {
-
+    const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(loginSchema) })
-
-    const onSubmit = (data: FieldValues) => {
-        console.log("on submit")
-        console.log(data)
+    const [showAlert, setShowAlert] = useState(false)
+    const [alertMsg, setAlertMsg] = useState("")
+    const { login } = useUser()
+    const onSubmit = async (data: FieldValues) => {
+        if (data.email && data.password) {
+            const user: IUser = {
+                email: data.email,
+                password: data.password
+            }
+            try{
+                await login({...user})
+                navigate('/');    
+            } catch(e : any){
+                if (axios.isAxiosError(e)) {
+                    const serverResponse = e.response;
+                    if (serverResponse && serverResponse.data) {
+                    setAlertMsg(serverResponse.data)
+                    setShowAlert(true)
+                    }
+                }
+            }
+        }
     }
 
     return (
@@ -44,7 +68,10 @@ function LoginForm() {
                     <p>First time? <Link to="/register">Register</Link></p>
                 </Text>
             </Form>
-        </LoginCard>    
+        </LoginCard> 
+        <Alert key="alert" variant="danger" show={showAlert} onClose={() => setShowAlert(false)} dismissible>
+            {alertMsg}
+        </Alert>       
     </LoginBackground>  
     )
 }
@@ -94,6 +121,7 @@ const LoginBackground = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
     background-image: url(${LoginBckgImg});
     background-position: center;
     background-size: cover;
