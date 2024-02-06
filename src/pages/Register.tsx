@@ -1,10 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { FieldValues, useForm } from "react-hook-form"
 import z from "zod"
+import axios from "axios";
+import Alert from 'react-bootstrap/Alert';
 import styled from "styled-components"
 import RegisterBckgImg from "../images/register.jpg"
 import { uploadPhoto } from '../services/file-service'
 import {registrUser, IUser} from "../services/user-service"
+import { useState } from "react";
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_MIME_TYPES = [
   "image/jpeg"
@@ -28,23 +31,51 @@ const loginSchema = z.object({
 type FormData = z.infer<typeof loginSchema>
 
 function RegisterForm() {
-
+    const [showAlert, setShowAlert] = useState(false)
+    const [alertVariant, setAlertVariant] = useState("")
+    const [alertMsg, setAlertMsg] = useState("")
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(loginSchema) })
-    const onSubmit = async (data: FieldValues) => {
-        var profileImg = data.imgUrl[0];
-        const url = await uploadPhoto(profileImg!);
-        if (data.email && data.password) {
-            const user: IUser = {
-                email: data.email,
-                password: data.password,
-                imgUrl: url
-            }
-            const res = await registrUser(user)
-            console.log(res)
+    const handleAlert  = (success: boolean, additionalInfo: string) => {
+        setShowAlert(true)
+        if(success){
+            setAlertVariant("success")
+            setAlertMsg("Registered successfuly")
+        } else {
+            setAlertVariant("danger")
+            const genericError = "An error occured while registeration. Please try again later."
+            const msg = additionalInfo == "" ? genericError : additionalInfo
+            setAlertMsg(msg)
         }
-        console.log(data)
+    }
+    const onSubmit = async (data: FieldValues) => {
+        try{
+            var profileImg = data.imgUrl[0];
+            const url = await uploadPhoto(profileImg!);
+            if (data.email && data.password) {
+                const user: IUser = {
+                    email: data.email,
+                    password: data.password,
+                    imgUrl: url
+                }
+                const res = await registrUser(user)
+                console.log(res)
+                handleAlert(true, "")
+            }
+
+        }
+        catch(e : any){
+            if (axios.isAxiosError(e)) {
+                const serverResponse = e.response;
+                if (serverResponse && serverResponse.data) {
+                    handleAlert(false, serverResponse.data)
+                } else {
+                    handleAlert(false, "")
+                }
+            }
+        }
     }
 
+    
     return (
     <RegisterBackground>
         <RegisterCard className="card border-light mb-3">
@@ -72,7 +103,10 @@ function RegisterForm() {
                 </InputDiv>
                 <RegisterButton type="submit" className="btn btn-primary">Register</RegisterButton>
             </Form>
-        </RegisterCard>    
+        </RegisterCard>
+        <Alert key="alert" variant={alertVariant} show={showAlert} onClose={() => setShowAlert(false)} dismissible>
+            {alertMsg}
+        </Alert>        
     </RegisterBackground>  
     )
 }
@@ -119,6 +153,7 @@ const RegisterBackground = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
     background-image: url(${RegisterBckgImg});
     background-position: center;
     background-size: cover;
