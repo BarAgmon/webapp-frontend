@@ -1,4 +1,5 @@
 // import { CredentialResponse } from "@react-oauth/google"
+import { CredentialResponse } from "@react-oauth/google";
 import apiClient from "./client-api"
 
 export interface IUser {
@@ -43,15 +44,15 @@ export const loginUser =  (user: IUser) => {
     })
   };
   
-// export const googleSignin = (credentialResponse: CredentialResponse) => {
-//     return new Promise<IUser>((resolve, reject) => {
-//         console.log("googleSignin ...")
-//         apiClient.post("/auth/google", credentialResponse).then((response) => {
-//             console.log(response)
-//             resolve(response.data)
-//         }).catch((error) => {
-//             console.log(error)
-//             reject(error)
-//         })
-//     })
-// }
+export const googleSignin = (credentialResponse: CredentialResponse) => {
+    return new Promise<IUser>((resolve, reject) => {
+        console.log("googleSignin ...")
+        apiClient.post("/auth/google", credentialResponse).then((response) => {
+            console.log(response)
+            resolve(response.data)
+        }).catch((error) => {
+            console.log(error)
+            reject(error)
+        })
+    })
+}

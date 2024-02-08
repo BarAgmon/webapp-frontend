@@ -1,10 +1,12 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
-import { loginUser, IAuthResponse, IUser } from "../services/user-service";
+import { loginUser, IAuthResponse, IUser, googleSignin } from "../services/user-service";
+import { CredentialResponse } from '@react-oauth/google';
 
 interface IUserContext {
   user: IUser | null;
   login: (user: IUser) => Promise<void>;
   logout: () => void;
+  signinViaGoogle: (credentialResponse: CredentialResponse) => Promise<void>;
 }
 
 const defaultUserContextVal = undefined
@@ -21,6 +23,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setUser(user); 
   };
 
+  const signinViaGoogle = async (credentialResponse: CredentialResponse) => {
+    const response: IUser = await googleSignin(credentialResponse);
+    console.log(response)
+    localStorage.setItem('accessToken', response.accessToken!);
+    localStorage.setItem('refreshToken', response.refreshToken!);
+    setUser(response); 
+  };
+
   const logout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
@@ -28,7 +38,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, login, logout }}>
+    <UserContext.Provider value={{ user, login, logout, signinViaGoogle}}>
       {children}
     </UserContext.Provider>
   );
