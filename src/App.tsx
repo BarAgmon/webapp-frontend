@@ -4,6 +4,8 @@ import RegisterForm from './pages/Register'
 import {Routes, Route, BrowserRouter} from "react-router-dom"
 import { UserProvider } from './context/user-context'
 import ProtectedRoute from "./pages/ProtectedRoute"
+import UserProfile from "./pages/UserProfile";
+import CurrencyExchange from './pages/CurrencyExchange'
 import HomePage from "./pages/HomePage"
 
 function App() {
@@ -20,6 +22,8 @@ function App() {
           } />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
+          <Route path="/profile" element={<UserProfile/>}/>
+          <Route path="/currency" element={<CurrencyExchange/>}/>
         </Routes>
       </BrowserRouter>
     </UserProvider>
