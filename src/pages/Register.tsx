@@ -57,7 +57,7 @@ function Register(){
     }
     return(
         <RegisterBackground>
-            <UserDetailsForm title="Register" user={null}
+            <UserDetailsForm title="Register" user={null} cardClassname="card border-light mb-3"
                 actionButtonTxt = "Register" onSubmitFunc={createUser} />
             <StyledAlert key="alert" variant={alertVariant} show={showAlert} onClose={() => setShowAlert(false)} dismissible>
                 {alertMsg}

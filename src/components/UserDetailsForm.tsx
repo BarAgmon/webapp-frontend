@@ -25,9 +25,10 @@ const loginSchema = z.object({
 
 type FormData = z.infer<typeof loginSchema>
 
-function UserDetailsForm({title, user, actionButtonTxt, onSubmitFunc}:
+function UserDetailsForm({title, user, actionButtonTxt, onSubmitFunc, cardClassname}:
     {title: string, user: IUser | null,
-     actionButtonTxt:string, onSubmitFunc:(data: FieldValues) => Promise<void>}) {
+     actionButtonTxt:string, onSubmitFunc:(data: FieldValues) => Promise<void>,
+    cardClassname: string}) {
 
 
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(loginSchema) })
@@ -37,7 +38,7 @@ function UserDetailsForm({title, user, actionButtonTxt, onSubmitFunc}:
 
     
     return (
-        <RegisterCard className="card border-light mb-3">
+        <RegisterCard className={cardClassname}>
             <Header className="card-header">{title}</Header>
             <Form  className="card-body" onSubmit={handleSubmit(onSubmit)}>
                 <InputDiv>

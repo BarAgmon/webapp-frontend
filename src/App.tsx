@@ -6,6 +6,7 @@ import { UserProvider } from './context/user-context'
 import ProtectedRoute from "./pages/ProtectedRoute"
 import CurrencyExchange from './pages/CurrencyExchange'
 import HomePage from "./pages/HomePage"
+import Profile from './pages/Profile'
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
           } />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<Register/>} />
+          <Route path="/profile" element={<Profile/>}/>
           <Route path="/currency" element={
           <ProtectedRoute>
             <CurrencyExchange/>
