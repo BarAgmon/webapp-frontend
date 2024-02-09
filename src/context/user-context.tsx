@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
-import { loginUser, IAuthResponse, IUser, googleSignin } from "../services/user-service";
+import { loginUser, IUser, googleSignin } from "../services/user-service";
 import { CredentialResponse } from '@react-oauth/google';
 
 interface IUserContext {
@@ -16,16 +16,16 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<IUser | null>(null);
 
   const login = async (user: IUser) => {
-    const response: IAuthResponse = await loginUser(user);
-    console.log(response)
-    localStorage.setItem('accessToken', response.accessToken);
-    localStorage.setItem('refreshToken', response.refreshToken);
-    setUser(user); 
+    const response: IUser = await loginUser(user);
+    console.log("login via app - " , response)
+    localStorage.setItem('accessToken', response.accessToken!);
+    localStorage.setItem('refreshToken', response.refreshToken!);
+    setUser(response); 
   };
 
   const signinViaGoogle = async (credentialResponse: CredentialResponse) => {
     const response: IUser = await googleSignin(credentialResponse);
-    console.log(response)
+    console.log("login via google - " , response)
     localStorage.setItem('accessToken', response.accessToken!);
     localStorage.setItem('refreshToken', response.refreshToken!);
     setUser(response); 

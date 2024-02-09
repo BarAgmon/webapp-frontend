@@ -17,7 +17,7 @@ function CurrencyExchange() {
 
   return (
     <PagePosition>
-      <h2>Currency Exchange</h2>
+      <Header>Currency Exchange</Header>
       <DesignedCard>
         <Card.Body>
           <InputDiv className="form-floating">
@@ -79,4 +79,8 @@ const PagePosition = styled.div`
 const InputDiv = styled.div`
   width: 20em;
   margin-top: 2em;
+`
+const Header = styled.h2`
+    font-family: Assistant;
+    font-size: 2em;
 `

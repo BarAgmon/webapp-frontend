@@ -6,7 +6,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <GoogleOAuthProvider clientId='<enter here from whatsapp :)>'>
+  <GoogleOAuthProvider clientId='461532925096-8menppatsj474jdt1qriqf23rthm8cu3.apps.googleusercontent.com'>
     <React.StrictMode>
       <App />
     </React.StrictMode>

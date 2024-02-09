@@ -6,8 +6,8 @@ function HomePage() {
     const { logout } = useUser();
     const navigate = useNavigate();
     const handleLogout = ()=> {
-      logout()
-      navigate('/');  
+      navigate('/');
+      logout() 
     }
     return (
       <div>
