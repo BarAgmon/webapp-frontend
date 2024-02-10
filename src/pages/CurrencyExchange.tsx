@@ -44,13 +44,13 @@ function CurrencyExchange() {
             <label htmlFor="toCurrency">To</label>
           </InputDiv>
           <InputDiv>
-            <Alert key="result" variant="success" show={result != ""} onClose={() => setResult("")} dismissible>{result}</Alert>
-          </InputDiv>
-          <InputDiv>
             <Button onClick={handleConvert} variant="dark">Convert</Button>
           </InputDiv>
         </Card.Body>
       </DesignedCard>
+      <InputDiv>
+        <Alert key="result" variant="success" show={result != ""} onClose={() => setResult("")} dismissible>{result}</Alert>
+      </InputDiv>
     </PagePosition>
   );
 };
@@ -73,8 +73,8 @@ const PagePosition = styled.div`
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
-    width: 100vw;
-    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
 `
 const InputDiv = styled.div`
   width: 20em;
@@ -83,4 +83,5 @@ const InputDiv = styled.div`
 const Header = styled.h2`
     font-family: Assistant;
     font-size: 2em;
+    margin-top: 2em;
 `
