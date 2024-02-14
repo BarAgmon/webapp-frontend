@@ -7,8 +7,9 @@ interface Props{
 }
 const ProtectedRoute = ({ children} : Props) => {
   const { user } = useUser(); 
+  console.log("protected", user)
   const accessToken = localStorage.getItem('accessToken');
-  const isLoggedIn = user || accessToken;
+  const isLoggedIn = user && accessToken;
 
   if (!isLoggedIn) {
     return <Navigate to="/login" />;

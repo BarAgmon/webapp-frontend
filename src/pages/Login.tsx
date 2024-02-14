@@ -10,6 +10,7 @@ import {useUser} from "../context/user-context"
 import { useState } from "react";
 import Alert from 'react-bootstrap/Alert';
 import { useNavigate } from 'react-router-dom';
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 
 const loginSchema = z.object({
     email: z.string().email({message: "Invalid email address"}),
@@ -25,6 +26,22 @@ function LoginForm() {
     const [showAlert, setShowAlert] = useState(false)
     const [alertMsg, setAlertMsg] = useState("")
     const { login } = useUser()
+    const { signinViaGoogle } = useUser()
+    const onGoogleLoginSuccess = async (credentialResponse: CredentialResponse) => {
+        try {
+            await signinViaGoogle(credentialResponse)
+            navigate('/'); 
+        } catch (e) {
+            setAlertMsg("Unexpected error occured. Please try again later.")
+            setShowAlert(true)
+        }
+    }
+    
+    const onGoogleLoginFailure = async () => {
+        setAlertMsg("Google login failed. Please try again later.")
+        setShowAlert(true)
+    }
+    
     const onSubmit = async (data: FieldValues) => {
         if (data.email && data.password) {
             const user: IUser = {
@@ -64,6 +81,8 @@ function LoginForm() {
                 </Input>
                 <Button type="submit" className="btn btn-primary">Login</Button>
                 <p>Or</p>
+                {/* <Button className="btn btn-primary" ><i className="bi bi-google"></i></Button> */}
+                <GoogleLogin onSuccess={onGoogleLoginSuccess} onError={onGoogleLoginFailure} />
                 <Text>
                     <p>First time? <Link to="/register">Register</Link></p>
                 </Text>

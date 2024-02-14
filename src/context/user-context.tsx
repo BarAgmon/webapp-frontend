@@ -1,10 +1,12 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
-import { loginUser, IAuthResponse, IUser } from "../services/user-service";
+import { loginUser, IUser, googleSignin } from "../services/user-service";
+import { CredentialResponse } from '@react-oauth/google';
 
 interface IUserContext {
   user: IUser | null;
   login: (user: IUser) => Promise<void>;
   logout: () => void;
+  signinViaGoogle: (credentialResponse: CredentialResponse) => Promise<void>;
 }
 
 const defaultUserContextVal = undefined
@@ -14,11 +16,19 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<IUser | null>(null);
 
   const login = async (user: IUser) => {
-    const response: IAuthResponse = await loginUser(user);
-    console.log(response)
-    localStorage.setItem('accessToken', response.accessToken);
-    localStorage.setItem('refreshToken', response.refreshToken);
-    setUser(user); 
+    const response: IUser = await loginUser(user);
+    console.log("login via app - " , response)
+    localStorage.setItem('accessToken', response.accessToken!);
+    localStorage.setItem('refreshToken', response.refreshToken!);
+    setUser(response); 
+  };
+
+  const signinViaGoogle = async (credentialResponse: CredentialResponse) => {
+    const response: IUser = await googleSignin(credentialResponse);
+    console.log("login via google - " , response)
+    localStorage.setItem('accessToken', response.accessToken!);
+    localStorage.setItem('refreshToken', response.refreshToken!);
+    setUser(response); 
   };
 
   const logout = () => {
@@ -28,7 +38,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, login, logout }}>
+    <UserContext.Provider value={{ user, login, logout, signinViaGoogle}}>
       {children}
     </UserContext.Provider>
   );
