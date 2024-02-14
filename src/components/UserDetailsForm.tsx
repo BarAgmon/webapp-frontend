@@ -8,7 +8,8 @@ import { useState } from "react";
 import defaultImg from "../images/profile.png"
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_MIME_TYPES = [
-  "image/jpeg"
+  "image/jpeg",
+  "image/png"
 ];
 const loginSchema = z.object({
     email: z.string().email({message: "Invalid email address"}),
