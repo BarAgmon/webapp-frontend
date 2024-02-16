@@ -15,11 +15,10 @@ export interface IAuthResponse {
     accessToken: string;
     refreshToken: string;
 }
+const accessToken = localStorage.getItem('accessToken');
 
 export const registrUser = (user: IUser) => {
     return new Promise<IUser>((resolve, reject) => {
-        console.log("Registering user...")
-        console.log(user)
         apiClient.post("/auth/register", user).then((response) => {
             console.log(response)
             resolve(response.data)
@@ -32,8 +31,6 @@ export const registrUser = (user: IUser) => {
 
 export const loginUser =  (user: IUser) => {
     return new Promise<IUser>((resolve, reject) => {
-        console.log("Login user...")
-        console.log(user)
         apiClient.post("/auth/login", user).then((response) => {
             console.log(response)
             resolve(response.data)
@@ -44,9 +41,20 @@ export const loginUser =  (user: IUser) => {
     })
   };
   
+export const updateUser = (user: IUser) => {
+    return new Promise<IUser>((resolve, reject) => {
+        apiClient.post("/user", user, {headers: {'authorization': `Bearer ${accessToken}`}
+        }).then((response) => {
+            console.log(response)
+            resolve(response.data)
+        }).catch((error) => {
+            console.log(error)
+            reject(error)
+        })
+    })
+}
 export const googleSignin = (credentialResponse: CredentialResponse) => {
     return new Promise<IUser>((resolve, reject) => {
-        console.log("googleSignin ...")
         apiClient.post("/auth/google", credentialResponse).then((response) => {
             console.log(response.data)
             resolve(response.data)

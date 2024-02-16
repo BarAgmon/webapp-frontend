@@ -5,36 +5,21 @@ import z from "zod"
 import {IUser} from "../services/user-service"
 import styled from "styled-components";
 import { useState } from "react";
-import defaultImg from "../images/profile.png"
-const MAX_FILE_SIZE = 1024 * 1024 * 5;
-const ACCEPTED_IMAGE_MIME_TYPES = [
-  "image/jpeg",
-  "image/png"
-];
-const loginSchema = z.object({
-    email: z.string().email({message: "Invalid email address"}),
-    password: z.string().min(6, "Password must contain at least 6 characters."),
-    confirmPassword: z.string().min(6, "Password must contain at least 6 characters."),
-    imgUrl: z.any()})
-    .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"]
-  }).refine((data) => ACCEPTED_IMAGE_MIME_TYPES.includes(data.imgUrl?.[0]?.type), {
-    message: "Only .jpeg format is supported.",
-    path: ["imgUrl"]
-}).refine((data) => data.imgUrl?.[0]?.size <= MAX_FILE_SIZE, {
-    message: "Max image size is 5MB.",
-    path: ["imgUrl"]
-});
+import defaultImg from "../images/profile.png";
 
-type FormData = z.infer<typeof loginSchema>
+export interface IUserForm {
+    email?: string,
+    password?: string,
+    confirmPassword?: string,
+    imgUrl?: string,
+}
 
-function UserDetailsForm({title, user, actionButtonTxt, onSubmitFunc, cardClassname}:
+function UserDetailsForm({title, user, actionButtonTxt, onSubmitFunc, cardClassname, validationSchema}:
     {title: string, user: IUser | null,
      actionButtonTxt:string, onSubmitFunc:(data: FieldValues) => Promise<void>,
-    cardClassname: string}) {
-
-    const { register, handleSubmit, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(loginSchema) })
+    cardClassname: string, validationSchema: z.ZodSchema<IUserForm>}) {
+    type FormData = z.infer<typeof validationSchema>
+    const { register, handleSubmit, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(validationSchema) })
     const onSubmit = async (data: FieldValues) => {
         onSubmitFunc(data)
     }
@@ -63,7 +48,7 @@ function UserDetailsForm({title, user, actionButtonTxt, onSubmitFunc, cardClassn
                 </InputDiv>
                 <InputDiv >
                     <InputLabel htmlFor="email">Email</InputLabel>
-                    <Input {...register("email")} value={user?.email} type="text" id="email" className="form-control" />
+                    <Input {...register("email")} defaultValue={user?.email} type="text" id="email" className="form-control" />
                     {errors.email && <ErrorMsg className="text-danger">{errors.email.message}</ErrorMsg>}
                 </InputDiv>          
                 <InputDiv>

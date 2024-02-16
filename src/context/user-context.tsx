@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
-import { loginUser, IUser, googleSignin } from "../services/user-service";
+import { loginUser, IUser, googleSignin, updateUser } from "../services/user-service";
 import { CredentialResponse } from '@react-oauth/google';
 
 interface IUserContext {
@@ -7,6 +7,7 @@ interface IUserContext {
   login: (user: IUser) => Promise<void>;
   logout: () => void;
   signinViaGoogle: (credentialResponse: CredentialResponse) => Promise<void>;
+  updateUserDetails: (user: IUser) => Promise<void>;
 }
 
 const defaultUserContextVal = undefined
@@ -37,8 +38,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
   };
 
+  const updateUserDetails = async(user: IUser) => {
+    const response: IUser = await updateUser(user);
+    setUser(response);
+  }
   return (
-    <UserContext.Provider value={{ user, login, logout, signinViaGoogle}}>
+    <UserContext.Provider value={{ user, login, logout, signinViaGoogle, updateUserDetails}}>
       {children}
     </UserContext.Provider>
   );
