@@ -8,6 +8,30 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Alert } from "react-bootstrap";
 import styled from "styled-components";
+import { z } from "zod";
+
+const MAX_FILE_SIZE = 1024 * 1024 * 5;
+const ACCEPTED_IMAGE_MIME_TYPES = [
+  "image/jpeg",
+  "image/png"
+];
+const loginSchema = z.object({
+    email: z.string().email({message: "Invalid email address"}),
+    password: z.string().min(6, "Password must contain at least 6 characters."),
+    confirmPassword: z.string().min(6, "Password must contain at least 6 characters."),
+    imgUrl: z.any().optional()})
+    .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"]
+  }).refine((data) =>  (ACCEPTED_IMAGE_MIME_TYPES.includes(data.imgUrl?.[0]?.type)) , {
+    message: "Only .jpeg and png formats are supported.",
+    path: ["imgUrl"]
+}).refine((data) =>  (data.imgUrl?.[0]?.size <= MAX_FILE_SIZE), {
+    message: "Max image size is 5MB.",
+    path: ["imgUrl"]
+});
+
+
 
 function Register(){
     const [showAlert, setShowAlert] = useState(false)
@@ -28,7 +52,7 @@ function Register(){
         }
     }
     const createUser = async (data: FieldValues) => {
-        try{
+        try {
             var profileImg = data.imgUrl[0];
             const url = await uploadPhoto(profileImg!);
             if (data.email && data.password) {
@@ -45,6 +69,7 @@ function Register(){
 
         }
         catch(e : any){
+            console.log(e)
             if (axios.isAxiosError(e)) {
                 const serverResponse = e.response;
                 if (serverResponse && serverResponse.data) {
@@ -52,13 +77,15 @@ function Register(){
                 } else {
                     handleAlert(false, "")
                 }
+            } else if (e.name === 'MissingField') {
+                handleAlert(false, e.message)
             }
         }
     }
     return(
         <RegisterBackground>
             <UserDetailsForm title="Register" user={null} cardClassname="card border-light mb-3"
-                actionButtonTxt = "Register" onSubmitFunc={createUser} />
+                actionButtonTxt = "Register" onSubmitFunc={createUser} validationSchema={loginSchema}/>
             <StyledAlert key="alert" variant={alertVariant} show={showAlert} onClose={() => setShowAlert(false)} dismissible>
                 {alertMsg}
             </StyledAlert>  
