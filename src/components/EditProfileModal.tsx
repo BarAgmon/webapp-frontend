@@ -5,7 +5,10 @@ import styled from "styled-components";
 import { useUser } from '../context/user-context';
 import { IUser } from "../services/user-service";
 import { uploadPhoto } from "../services/file-service";
+import { ToastContainer, toast } from 'react-toastify';
 import { z } from "zod";
+import axios from "axios";
+
 
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_MIME_TYPES = [
@@ -32,6 +35,7 @@ const loginSchema = z.object({
 
 function EditProfileModal({show, setShow} : {show:boolean, setShow: Function}) {
     const { updateUserDetails } = useUser()
+
     const keepOnlyUpdatedFileds = (user:IUser) => {
         const filteredUser = Object.entries(user).reduce((acc : IUser, [key, value]) => {
             if (value !== '') {
@@ -67,39 +71,49 @@ function EditProfileModal({show, setShow} : {show:boolean, setShow: Function}) {
                 user = keepOnlyUpdatedFileds(user)
                 await updateUserDetails(user)
             }
+            toast.success('Update finished successfully');
             setShow(false)           
         }
         catch(e : any){
             console.log(e)
-            // if (axios.isAxiosError(e)) {
-            //     const serverResponse = e.response;
-            //     if (serverResponse && serverResponse.data) {
-            //         handleAlert(false, serverResponse.data)
-            //     } else {
-            //         handleAlert(false, "")
-            //     }
-            // }
+            if (axios.isAxiosError(e)) {
+                const serverResponse = e.response;
+                if (serverResponse && serverResponse.data) {
+                    if (serverResponse.status == 403){
+                        toast.error('Your token has been expired. Try login again');
+                    } else {
+                        toast.error(serverResponse.data);
+                    }
+                    
+                } else {
+                    toast.error('Please try again later.');
+                }
+            }
         }
     }
     const { user } = useUser(); 
     console.log(user)
     return(
-        <Modal
-        aria-labelledby="contained-modal-title-vcenter"
-        show={show}
-        onHide={() => setShow(false)}
-        fullscreen="md-down"
-        centered >
-            <Modal.Header closeButton/>
-            <Modal.Body>
-                <StyledDiv>
-                    <UserDetailsForm actionButtonTxt="Save" 
-                    title="Update Profile" user={user} 
-                    onSubmitFunc={updateDetails}
-                    cardClassname="card border-dark mb-3" validationSchema={loginSchema}/>
-                </StyledDiv>
-            </Modal.Body>     
-        </Modal>
+        <>
+            <Modal
+            aria-labelledby="contained-modal-title-vcenter"
+            show={show}
+            onHide={() => setShow(false)}
+            fullscreen="md-down"
+            centered >
+                <Modal.Header closeButton/>
+                <Modal.Body>
+                    <StyledDiv>
+                        <UserDetailsForm actionButtonTxt="Save" 
+                        title="Update Profile" user={user} 
+                        onSubmitFunc={updateDetails}
+                        cardClassname="card border-dark mb-3" validationSchema={loginSchema}/>
+                    </StyledDiv>
+                </Modal.Body>  
+            </Modal>
+            <ToastContainer theme="dark" position="top-center" autoClose={5000} hideProgressBar={false} 
+            newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss pauseOnHover/>
+        </>
     );
 }
 

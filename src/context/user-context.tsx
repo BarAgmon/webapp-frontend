@@ -14,13 +14,16 @@ const defaultUserContextVal = undefined
 const UserContext = createContext<IUserContext | undefined>(defaultUserContextVal);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<IUser | null>(null);
+  const [user, setUser] = useState<IUser | null>(() => {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;});
 
   const login = async (user: IUser) => {
     const response: IUser = await loginUser(user);
     console.log("login via app - " , response)
     localStorage.setItem('accessToken', response.accessToken!);
     localStorage.setItem('refreshToken', response.refreshToken!);
+    localStorage.setItem('user', JSON.stringify(response));
     setUser(response); 
   };
 
@@ -29,12 +32,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     console.log("login via google - " , response)
     localStorage.setItem('accessToken', response.accessToken!);
     localStorage.setItem('refreshToken', response.refreshToken!);
+    localStorage.setItem('user', JSON.stringify(response));
     setUser(response); 
   };
 
   const logout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
     setUser(null);
   };
 
