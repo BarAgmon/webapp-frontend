@@ -45,6 +45,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const updateUserDetails = async(user: IUser) => {
     const response: IUser = await updateUser(user);
+    localStorage.setItem('user', JSON.stringify(response));
     setUser(response);
   }
   return (
