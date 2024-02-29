@@ -13,8 +13,8 @@ if (isProduction) {
   serverConfig = {
     port: 4000, // Default port
     https: {
-      key: fs.readFileSync(path.resolve('../client-key.pem')),
-      cert: fs.readFileSync(path.resolve('../client-cert.pem')),
+      key: fs.readFileSync(path.resolve('/home/st111/cert/server.key')),
+      cert: fs.readFileSync(path.resolve('/home/st111/cert/server.crt')),
     },
   };
 } else {
@@ -27,4 +27,5 @@ if (isProduction) {
 export default defineConfig({
   plugins: [react()],
   server: serverConfig,
+  preview: serverConfig
 });

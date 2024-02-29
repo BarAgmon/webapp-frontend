@@ -1,8 +1,7 @@
 import axios from "axios";
 const apiClient = axios.create({
-    baseURL: "http://localhost:3000"
+    baseURL: import.meta.env.VITE_SERVER_URL,
 });
-
 apiClient.interceptors.response.use(response => {
     return response;
 }, async error => {

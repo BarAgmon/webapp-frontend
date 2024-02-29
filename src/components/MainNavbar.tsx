@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import EditProfileModal from './EditProfileModal';
 import styled from 'styled-components';
+import coinImg from "../../src/assets/coin.png";
 
 function MainNavbar() {
   const [showProfileModal, setShowProfileModal] = useState(false)
@@ -22,7 +23,7 @@ function MainNavbar() {
       <Navbar expand="lg" className="bg-body-tertiary">
         <Container>
           <Navbar.Brand href="/">
-          <Logo rel="icon" src="../../src/assets/coin.png " />
+          <Logo rel="icon" src={coinImg} />
             Treasure
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
