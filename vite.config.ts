@@ -26,6 +26,8 @@ if (isProduction) {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  server: serverConfig,
+  optimizeDeps: {
+    exclude: ['js-big-decimal']
+  }
   preview: serverConfig
-});
+})
