@@ -6,6 +6,7 @@ import { UserProvider } from './context/user-context'
 import ProtectedRoute from "./pages/ProtectedRoute"
 import CurrencyExchange from './pages/CurrencyExchange'
 import PageWithNavbar from "./components/PageWithNavbar"
+import Home from './pages/Home'
 
 function App() {
 
@@ -16,13 +17,6 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<Register/>} />
-          <Route path="/" element={
-            <ProtectedRoute>
-             <PageWithNavbar>
-                <CurrencyExchange/>
-              </PageWithNavbar>
-           </ProtectedRoute>
-          } />       
           <Route path="/currency" element={
             <ProtectedRoute> 
               <PageWithNavbar>
@@ -30,6 +24,13 @@ function App() {
               </PageWithNavbar>
             </ProtectedRoute>
           } />
+          <Route path="/" element={
+            <ProtectedRoute>
+             <PageWithNavbar>
+                <Home/>
+              </PageWithNavbar>
+           </ProtectedRoute>
+          } />       
         </Routes>
       </BrowserRouter>
     </UserProvider>
