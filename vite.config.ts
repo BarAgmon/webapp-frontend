@@ -29,5 +29,6 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['js-big-decimal']
   }
+  server: serverConfig,
   preview: serverConfig
 })
