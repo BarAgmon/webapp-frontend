@@ -134,16 +134,6 @@ const Input = styled.input`
   font-size: 0.8em;
 `;
 
-const RegisterButton = styled.button`
-  margin-top: 0.8em;
-  margin-bottom: 0.2em;
-  background: #262626;
-`;
-
-const ErrorMsg = styled.p`
-  font-size: 0.7em;
-`;
-
 const InputLabel = styled.label`
   font-family: Assistant;
   font-size: 0.9em;

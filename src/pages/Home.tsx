@@ -1,9 +1,4 @@
-import React, { useState } from 'react';
-import {convertCurrency, supportedCurrencies} from '../services/currency-api'
-import { Alert, Button } from 'react-bootstrap';
-import Card from 'react-bootstrap/Card';
 import styled from 'styled-components';
-import MoneyPng from '../images/image.jpg';
 import AllPosts from '../components/AllPosts';
 
 function Home() {

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form, ListGroup } from 'react-bootstrap'; // Import ListGroup
 import { IPost, IComment } from '../utils/types';
-import { IUser } from '../services/user-service';
 import { commentOnPost } from '../services/post-service';
 
 interface CommentDialogProps {

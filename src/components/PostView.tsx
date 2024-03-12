@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import { Card, Button, Form, ButtonGroup } from 'react-bootstrap';
 import styled from 'styled-components';
 import { IPost } from '../utils/types';
-import { IUser } from '../services/user-service';
 import {updatePost, deletePost, likePost} from '../services/post-service';
 import { useUser } from '../context/user-context';
-import CommentDialog from './CommentDialog';
 import {Image } from "react-bootstrap";
 import { uploadPhoto } from "../services/file-service";
 import { useNavigate } from 'react-router-dom';
@@ -19,7 +17,6 @@ const PostView: React.FC<PostViewProps> = ({ post, handlePostChange }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(post.content);
   const { user } = useUser();
-  const [showComments, setShowComments] = useState(false);
   const [image, setImage] = useState<File | null>(null); 
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [postView, setPostView] = useState<IPost>(post);
@@ -169,20 +166,10 @@ const handleCommentClick = () => {
 
 export default PostView;
 
-const StyledCard = styled(Card)`
-  margin-bottom: 20px;
-  position: relative;
-`;
-
 const UserInfoContainer = styled.div`
   display: flex;
   align-items: center; /* Align items vertically */
   justify-content: space-between;
-`;
-
-const UserInfoText = styled.div`
-  font-weight: bold;
-  font-size: 18px; /* Adjust font size as needed */
 `;
 
 const CommentsButton = styled.button`
@@ -196,11 +183,6 @@ const CommentsButton = styled.button`
 `;
 
 const CardContent = styled(Card.Body)``;
-
-const CardFooter = styled(Card.Footer)`
-  display: flex;
-  justify-content: space-between;
-`;
 
 const FooterLeft = styled.div``;
 
@@ -223,17 +205,6 @@ const Input = styled.input`
     height: 3em;
     font-family: Assistant;
     font-size: 0.8em;
-`
-
-const RegisterButton = styled.button`
-    margin-top: 0.8em;
-    margin-bottom: 0.2em;
-    background: #262626;
-`
-
-
-const ErrorMsg = styled.p`
-    font-size: 0.7em
 `
 
 const InputLabel = styled.label`

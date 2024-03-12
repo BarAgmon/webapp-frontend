@@ -9,12 +9,11 @@ import { useUser } from '../context/user-context';
 
 const AllPosts: React.FC = () => {
   const [posts, setPosts] = useState<IPost[]>([]);
-  const [isEditing, setIsEditing] = useState(false); // State for editing a post
   const [isNewPost, setIsNewPost] = useState(false); // State for creating a new post
   const [showMyPosts, setShowMyPosts] = useState(false); // State for showing only user's posts
   const { user } = useUser();
 
-const handleSubmitNewpost = useCallback((post: IPost) => {
+const handleSubmitNewpost = useCallback((_: IPost) => {
   setIsNewPost(false);
   handlePostChange();
 }, []); 
@@ -29,8 +28,6 @@ const fetchAllPosts = async () => {
   };
 
 useEffect(() => {
-  setIsEditing(false);
-
   const fetchAllPosts = async () => {
     try {
       const postsData = await fetchPosts();

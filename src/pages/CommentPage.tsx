@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import CommentForm from '../components/CommentForm';
-import PostView from '../components/PostView';
 import { getPostById } from '../services/post-service'; // Import your post service function
 import { IPost } from '../utils/types';
 import styled from 'styled-components';
