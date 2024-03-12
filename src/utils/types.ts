@@ -6,6 +6,7 @@ export interface IComment {
 
 export interface IPost {
   user: string;
+  userName?: string;
   createdAt: Date;
   content: string;
   imgUrl?: string;

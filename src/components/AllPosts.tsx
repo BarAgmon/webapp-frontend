@@ -16,7 +16,17 @@ const AllPosts: React.FC = () => {
 
 const handleSubmitNewpost = useCallback((post: IPost) => {
   setIsNewPost(false);
-}, []); // No dependencies since the function doesn't depend on any external variables
+  handlePostChange();
+}, []); 
+
+const fetchAllPosts = async () => {
+    try {
+      const postsData = await fetchPosts();
+      setPosts(postsData);
+    } catch (error) {
+      console.log('Error fetching posts:', error);
+    }
+  };
 
 useEffect(() => {
   setIsEditing(false);
@@ -31,18 +41,15 @@ useEffect(() => {
   };
   
   fetchAllPosts();
-}, [handleSubmitNewpost]);
+}, []);
   
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
+const handlePostChange = () =>{ 
+  fetchAllPosts();
+}
+
 
   const handleNewPostClick = () => {
     setIsNewPost(true); // Open the PostForm
-  };
-
-  const handleCancelEdit = () => {
-    setIsEditing(false);
   };
 
   const handleCancelNewPost = () => {
@@ -65,14 +72,13 @@ useEffect(() => {
           </Button>
         </ButtonsContainer>
       
-      <PostsList style={{marginBottom:'20px'}}>
-        {posts.map((post) => (
-          (!showMyPosts || (user && post.user === user._id)) && (
-          user && <PostView key={post._id} post={post} userPost={user} />
-          )
-        ))}
-
-      </PostsList>
+      <PostsList style={{ marginBottom: '20px' }}>
+  {posts.slice().reverse().map((post) => (
+    (!showMyPosts || (user && post.user === user._id)) && (
+    user && <PostView key={post._id} post={post} handlePostChange={handlePostChange} />
+    )
+  ))}
+</PostsList>
     </PostsContainer>
   );
 };
@@ -89,9 +95,9 @@ const PostsContainer = styled.div`
 
 const PostsList = styled.div`
   display: flex;
-  flex-wrap: wrap; /* Allow flex items to wrap to the next row */
-  justify-content: space-between; /* Distribute items evenly with space between them */
-  gap: 20px; /* Set the gap between items */
+  flex-wrap: wrap;
+  justify-content: center; /* Center the posts horizontally */
+  gap: 18px; /* Set the gap between posts */
 `;
 
 const ButtonsContainer = styled.div`

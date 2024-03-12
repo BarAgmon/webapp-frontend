@@ -1,11 +1,11 @@
 import apiClient from "./client-api"
 import { IComment, IPost, postUpdate } from "../utils/types";
 
-const refreshToken = localStorage.getItem('refreshToken');
 
 export const createPost = (post: IPost) => {
     return new Promise<IPost>((resolve, reject) => {
-        apiClient.post("/post/create", post, {headers: {'authorization': `Bearer ${refreshToken}`}
+        const accessToken = localStorage.getItem('accessToken');
+        apiClient.post("/post/create", post, {headers: {'authorization': `Bearer ${accessToken}`}
         }).then((response) => {
             console.log(response)
             resolve(response.data)
@@ -18,7 +18,8 @@ export const createPost = (post: IPost) => {
 
 export const updatePost = (post: postUpdate) => {
     return new Promise<postUpdate>((resolve, reject) => {
-        apiClient.put("/post/update", post, {headers: {'authorization': `Bearer ${refreshToken}`}
+        const accessToken = localStorage.getItem('accessToken');
+        apiClient.put("/post/update", post, {headers: {'authorization': `Bearer ${accessToken}`}
         }).then((response) => {
             console.log(response)
             resolve(response.data)
@@ -31,7 +32,8 @@ export const updatePost = (post: postUpdate) => {
 
 export const commentOnPost = (comment: IComment) => {
     return new Promise<IComment>((resolve, reject) => {
-        apiClient.put("/post/comment", comment, {headers: {'authorization': `Bearer ${refreshToken}`}
+        const accessToken = localStorage.getItem('accessToken');
+        apiClient.put("/post/comment", comment, {headers: {'authorization': `Bearer ${accessToken}`}
         }).then((response) => {
             console.log(response)
             resolve(response.data)
@@ -44,7 +46,8 @@ export const commentOnPost = (comment: IComment) => {
 
 export const myPosts = () => {
     return new Promise<IPost>((resolve, reject) => {
-        return apiClient.get("/post/myPosts", {headers: {'authorization': `Bearer ${refreshToken}`}
+        const accessToken = localStorage.getItem('accessToken');
+        return apiClient.get("/post/myPosts", {headers: {'authorization': `Bearer ${accessToken}`}
         }).then((response) => {
             console.log(response)
             resolve(response.data)
@@ -55,9 +58,11 @@ export const myPosts = () => {
     })
 }
 
-export const likePost = (post: IPost) => {
+export const likePost = (post: string) => {
+    const accessToken = localStorage.getItem('accessToken');
     return new Promise<IPost>((resolve, reject) => {
-        apiClient.put("/post/like", post, {headers: {'authorization': `Bearer ${refreshToken}`}
+        apiClient.put("/post/like", {
+  "postId": post}, {headers: {'authorization': `Bearer ${accessToken}`}
         }).then((response) => {
             console.log(response)
             resolve(response.data)
@@ -68,9 +73,10 @@ export const likePost = (post: IPost) => {
     })
 }
 
-export const dislikePost = (post: IPost) => {
-    return new Promise<IPost>((resolve, reject) => {
-        apiClient.put("/post/dislike", post, {headers: {'authorization': `Bearer ${refreshToken}`}
+export const getPostById = (id: string | undefined) => {
+        const accessToken = localStorage.getItem('accessToken');
+        return new Promise<IPost>((resolve, reject) => {
+        apiClient.get(`/post/byId?postId=${id}`, {headers: {'authorization': `Bearer ${accessToken}`}
         }).then((response) => {
             console.log(response)
             resolve(response.data)
@@ -81,11 +87,13 @@ export const dislikePost = (post: IPost) => {
     })
 }
 
-export const deletePost = (post: IPost) => {
+export const deletePost = (post: string) => {
     return new Promise<IPost>((resolve, reject) => {
+        const accessToken = localStorage.getItem('accessToken');
         apiClient.delete("/post/delete", {
-            headers: {'authorization': `Bearer ${refreshToken}`},
-            data: post
+            headers: {'authorization': `Bearer ${accessToken}`},
+            data: {
+  "postId": post}
         }).then((response) => {
             console.log(response)
             resolve(response.data)
@@ -98,7 +106,8 @@ export const deletePost = (post: IPost) => {
 
 export const fetchPosts = () => {
    return new Promise<IPost[]>((resolve, reject) => {
-        apiClient.get("/post/fetch", { headers: { 'authorization': `Bearer ${refreshToken}` } })
+        const accessToken = localStorage.getItem('accessToken');
+        apiClient.get("/post/fetch", { headers: { 'authorization': `Bearer ${accessToken}` } })
             .then((response) => {
                 console.log(response)
                 const posts: IPost[] = response.data; // Assuming the response contains a field 'posts' which is an array of IPost objects

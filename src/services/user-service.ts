@@ -15,7 +15,6 @@ export interface IAuthResponse {
     accessToken: string;
     refreshToken: string;
 }
-const accessToken = localStorage.getItem('accessToken');
 
 export const registrUser = (user: IUser) => {
     return new Promise<IUser>((resolve, reject) => {
@@ -42,6 +41,7 @@ export const loginUser =  (user: IUser) => {
   };
   
 export const updateUser = (user: IUser) => {
+    const accessToken = localStorage.getItem('accessToken');
     return new Promise<IUser>((resolve, reject) => {
         apiClient.post("/user", user, {headers: {'authorization': `Bearer ${accessToken}`}
         }).then((response) => {

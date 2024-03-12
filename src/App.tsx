@@ -7,6 +7,7 @@ import ProtectedRoute from "./pages/ProtectedRoute"
 import CurrencyExchange from './pages/CurrencyExchange'
 import PageWithNavbar from "./components/PageWithNavbar"
 import Home from './pages/Home'
+import CommentsPage from './pages/CommentPage'
 
 function App() {
 
@@ -17,6 +18,16 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<Register/>} />
+          <Route
+            path="/comments/:postId"
+            element={
+              <ProtectedRoute>
+                <PageWithNavbar>
+                  <CommentsPage />
+                </PageWithNavbar>
+              </ProtectedRoute>
+            }
+          />
           <Route path="/currency" element={
             <ProtectedRoute> 
               <PageWithNavbar>

@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
-import { Card, Button, Form } from 'react-bootstrap';
+import { Card, Button, Form, ButtonGroup } from 'react-bootstrap';
 import styled from 'styled-components';
 import { IPost } from '../utils/types';
 import { IUser } from '../services/user-service';
-import {updatePost} from '../services/post-service';
+import {updatePost, deletePost, likePost} from '../services/post-service';
 import { useUser } from '../context/user-context';
 import CommentDialog from './CommentDialog';
 import {Image } from "react-bootstrap";
 import { uploadPhoto } from "../services/file-service";
+import { useNavigate } from 'react-router-dom';
 
 interface PostViewProps {
   post: IPost;
-  userPost: IUser;
-  // Add onUpdatePost function prop for updating the post
+  handlePostChange?: () => void;
 }
 
-const PostView: React.FC<PostViewProps> = ({ post, userPost }) => {
+const PostView: React.FC<PostViewProps> = ({ post, handlePostChange }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(post.content);
   const { user } = useUser();
@@ -23,6 +23,9 @@ const PostView: React.FC<PostViewProps> = ({ post, userPost }) => {
   const [image, setImage] = useState<File | null>(null); 
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [postView, setPostView] = useState<IPost>(post);
+  const [isLiked, setIsLiked] = useState(postView.like.includes(user?._id || ''));
+
+  const navigate = useNavigate();
 
 const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   const fileDomElement = event.target;
@@ -44,13 +47,6 @@ const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsEditing(true);
   };
 
-  const handleCommentClick = () => {
-    setShowComments(true);
-  };
-
-  const handleCloseComments = () => {
-    setShowComments(false);
-  };
   const handleCancelEdit = () => {
     setIsEditing(false);
     setEditedContent(post.content);
@@ -66,10 +62,34 @@ const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPostView({...postView, content: editedContent});
   }
   setIsEditing(false);
+  if (handlePostChange) handlePostChange();
 };
 
+const handleLikeClick = async () => {
+  setIsLiked(!isLiked); // Toggle like status
+  const updatedLikes = isLiked
+    ? postView.like.filter((userId) => userId !== (user?._id || '')) 
+    : [...postView.like, user?._id || '']; 
+
+  setPostView((prevPostView) => ({
+    ...prevPostView,
+    like: updatedLikes,
+  }));
+
+  likePost(postView._id || '');
+  if (handlePostChange) handlePostChange();
+};
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setEditedContent(e.target.value);
+  };
+
+  const handleDeletePost = async () => {
+    try {
+      await deletePost(post._id || '');
+      if (handlePostChange) handlePostChange();
+    } catch (error) {
+      console.error('Error deleting post:', error);
+    }
   };
 
   const formatDate = (dateString: any) => {
@@ -80,15 +100,24 @@ const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     return `${day}.${month}.${year}`;
   };
 
+const handleCommentClick = () => {
+  navigate(`/comments/${post._id}`);
+};
+
   return (
     <Card style={{ width: '25rem' }}>
-      <Card.Header as="h5">{userPost?.email.split("@")[0]}</Card.Header>
+      <Card.Header as="h5">{postView.userName}</Card.Header>
       {postView.imgUrl && <Card.Img variant="top" src={postView.imgUrl} />}
       <UserInfoContainer style={{paddingLeft:'10px'}}>
         <Card.Subtitle>{formatDate(postView.createdAt)}</Card.Subtitle>
-        {user?._id === userPost?._id && !isEditing && (
-          <Button style={{margin:'6px'}} variant="light" size="sm" onClick={handleEditClick}>Edit</Button>
-        )}
+        <ButtonGroup>
+          {user?._id === postView.user && !isEditing && (
+            <Button style={{ margin: '6px' }} variant="light" size="sm" onClick={handleEditClick}>Edit</Button>
+          )}
+          {user?._id === postView.user && !isEditing && (
+            <Button style={{ margin: '6px' }} variant="danger" size="sm" onClick={handleDeletePost}>Delete</Button>
+          )}
+        </ButtonGroup>
       </UserInfoContainer>
       
       {isEditing ? (
@@ -101,7 +130,6 @@ const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
                 value={editedContent}
                 onChange={handleContentChange}
               />
-              
               <InputDiv>
                 <InputLabel htmlFor="imgUrl">Choose image</InputLabel>
                  <ImgInputDiv className="form-control">
@@ -123,13 +151,18 @@ const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
           <Card.Text>{postView.content}</Card.Text>
         </CardContent>
       )}
-       <CardFooter>
-        <FooterLeft>{postView.like.length} liked</FooterLeft>
+       <Card.Footer>
+        <FooterLeft>
+          {postView.like.length} {postView.like.length === 1 ? 'like' : 'likes'}
+        </FooterLeft>
+        <Button variant={isLiked ? 'success' : 'outline-success'} onClick={handleLikeClick}>
+          {isLiked ? 'Unlike' : 'Like'}
+        </Button>
         <CommentsButton onClick={handleCommentClick}>{postView.comments.length} comments</CommentsButton>
-      </CardFooter>
-      {showComments && (
-        <CommentDialog post={postView} userPost={userPost} onClose={handleCloseComments} />
-      )}
+      </Card.Footer>
+      {/* {showComments && (
+        <CommentDialog post={postView} userPost={postView.userName} onClose={handleCloseComments} handlePostChange={handlePostChange}/> */}
+      {/* )} */}
     </Card>
   );
 };

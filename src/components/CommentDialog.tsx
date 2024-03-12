@@ -6,11 +6,12 @@ import { commentOnPost } from '../services/post-service';
 
 interface CommentDialogProps {
   post: IPost;
-  userPost: IUser;
+  userPost: string | undefined;
   onClose: () => void;
+  handlePostChange: () => void;
 }
 
-const CommentDialog: React.FC<CommentDialogProps> = ({ post, userPost, onClose }) => {
+const CommentDialog: React.FC<CommentDialogProps> = ({ post, userPost, onClose, handlePostChange}) => {
   const [newComment, setNewComment] = useState('');
   const [viewPost, setViewPost] = useState<IPost>(post);
 
@@ -19,13 +20,14 @@ const CommentDialog: React.FC<CommentDialogProps> = ({ post, userPost, onClose }
   };
 
   const handleCommentSubmit = async () => {
-    const user = userPost?.email.split("@")[0]
-    const commentObj: IComment = { user, comment: newComment, postId: post._id };
+    const commentObj: IComment = { user: userPost || '', comment: newComment, postId: post._id };
     await commentOnPost(commentObj);
 
     const updatedComments = [...post.comments, commentObj]; 
     setViewPost({...post, comments: updatedComments});
     setNewComment('');
+
+    handlePostChange();
   };
 
   return (
