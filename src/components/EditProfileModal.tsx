@@ -92,7 +92,6 @@ function EditProfileModal({show, setShow} : {show:boolean, setShow: Function}) {
         }
     }
     const { user } = useUser(); 
-    console.log(user)
     return(
         <>
             <Modal

@@ -106,7 +106,7 @@ const handleCommentClick = () => {
       <Card.Header as="h5">{postView.userName}</Card.Header>
       {postView.imgUrl && <Card.Img variant="top" src={postView.imgUrl} />}
       <UserInfoContainer style={{paddingLeft:'10px'}}>
-        <Card.Subtitle>{formatDate(postView.createdAt)}</Card.Subtitle>
+        <Card.Subtitle style={{ margin: '6px' }}>{formatDate(postView.createdAt)}</Card.Subtitle>
         <ButtonGroup>
           {user?._id === postView.user && !isEditing && (
             <Button style={{ margin: '6px' }} variant="light" size="sm" onClick={handleEditClick}>Edit</Button>
@@ -157,9 +157,6 @@ const handleCommentClick = () => {
         </Button>
         <CommentsButton onClick={handleCommentClick}>{postView.comments.length} comments</CommentsButton>
       </Card.Footer>
-      {/* {showComments && (
-        <CommentDialog post={postView} userPost={postView.userName} onClose={handleCloseComments} handlePostChange={handlePostChange}/> */}
-      {/* )} */}
     </Card>
   );
 };
